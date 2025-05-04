@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: postgres_db
+    image: postgres:13-alpine
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+
+  sleep_api:
+    build: .
+    volumes:
+      - ./:/app/
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/postgres
+      - SPRING_DATASOURCE_USER=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+
+    depends_on:
+      - db
