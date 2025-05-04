@@ -30,6 +30,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'com.h2database:h2'
 
 	// Add Lombok-aware Checkstyle plugin
 	checkstyle 'com.puppycrawl.tools:checkstyle:10.12.5'
