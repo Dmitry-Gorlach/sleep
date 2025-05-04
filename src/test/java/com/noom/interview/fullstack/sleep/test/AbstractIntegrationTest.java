@@ -15,7 +15,7 @@ public abstract class AbstractIntegrationTest {
 
     @Container
     @SuppressWarnings("resource")  // suppress IntelliJ’s “should be closed” warning
-    protected static final PostgreSQLContainer<?> postgres =
+    protected static final PostgreSQLContainer<?> POSTGRES =
             new PostgreSQLContainer<>("postgres:15-alpine")
                     .withDatabaseName("testdb")
                     .withUsername("test")
@@ -23,9 +23,9 @@ public abstract class AbstractIntegrationTest {
 
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url",     postgres::getJdbcUrl);
-        registry.add("spring.datasource.username",postgres::getUsername);
-        registry.add("spring.datasource.password",postgres::getPassword);
+        registry.add("spring.datasource.url",     POSTGRES::getJdbcUrl);
+        registry.add("spring.datasource.username",POSTGRES::getUsername);
+        registry.add("spring.datasource.password",POSTGRES::getPassword);
         registry.add("spring.flyway.enabled",     () -> "true");
     }
 }
