@@ -18,6 +18,10 @@ build/
 # Local application properties
 application-local.properties
 .env
+local/
 
 # Build output
 out/
+
+#Docker files
+db/

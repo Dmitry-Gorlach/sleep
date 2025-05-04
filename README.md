@@ -20,11 +20,19 @@ The application provides a RESTful API for recording and analyzing sleep pattern
    ```
 
 ### Running with Docker
-1. Build and start the containers:
+1. Ensure Docker daemon is running on your system
+2. Build and start the containers:
    ```
    docker-compose up -d
    ```
-2. The application will be available at http://localhost:8080
+3. The application will be available at http://localhost:8080
+
+Note: The application uses environment variables for database configuration. These are set in the `.env` file, .env example:
+SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+DB_USER=postgres
+DB_PASSWORD=postgres
+
+The Dockerfile uses the `openjdk:21-slim` base image, which is a Debian-based image that includes the apt package manager needed for installing additional dependencies.
 
 ## API Documentation
 The application provides RESTful endpoints for managing sleep data.
