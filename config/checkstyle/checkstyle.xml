@@ -41,7 +41,6 @@
         <module name="TypeName"/>
 
         <!-- Checks for imports -->
-        <module name="AvoidStarImport"/>
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
