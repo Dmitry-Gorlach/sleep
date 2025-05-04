@@ -29,8 +29,8 @@ The application provides a RESTful API for recording and analyzing sleep pattern
 
 Note: The application uses environment variables for database configuration. These are set in the `.env` file, .env example:
 SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
-DB_USER=postgres
-DB_PASSWORD=postgres
+DB_USER=user
+DB_PASSWORD=password
 
 The Dockerfile uses the `openjdk:21-slim` base image, which is a Debian-based image that includes the apt package manager needed for installing additional dependencies.
 
