@@ -6,7 +6,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +18,6 @@ class SleepLogRepositoryIntegrationTest extends AbstractIntegrationTest {
     private UUID userId;
     private LocalDate today;
     private LocalDate yesterday;
-    private LocalDate twoDaysAgo;
 
     @BeforeEach
     void setUp() {
@@ -30,7 +28,7 @@ class SleepLogRepositoryIntegrationTest extends AbstractIntegrationTest {
         userId = UUID.randomUUID();
         today = LocalDate.now();
         yesterday = today.minusDays(1);
-        twoDaysAgo = today.minusDays(2);
+        LocalDate twoDaysAgo = today.minusDays(2);
 
         // Create test sleep logs
         SleepLog sleepLogToday = createSleepLog(userId, today, Feeling.GOOD);
@@ -112,7 +110,7 @@ class SleepLogRepositoryIntegrationTest extends AbstractIntegrationTest {
     }
 
     private SleepLog createSleepLog(UUID userId, LocalDate sleepDate, Feeling feeling) {
-        Instant bedTime = sleepDate.atStartOfDay(ZoneId.systemDefault()).minus(8, ChronoUnit.HOURS).toInstant();
+        Instant bedTime = sleepDate.atTime(LocalTime.of(16, 0)).atZone(ZoneId.systemDefault()).toInstant();
         Instant wakeTime = sleepDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
         int totalTimeInBedMinutes = 8 * 60; // 8 hours in minutes
 

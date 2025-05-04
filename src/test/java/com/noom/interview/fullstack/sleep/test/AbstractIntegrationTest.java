@@ -14,17 +14,18 @@ import org.testcontainers.junit.jupiter.*;
 public abstract class AbstractIntegrationTest {
 
     @Container
-    protected static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test");
+    @SuppressWarnings("resource")  // suppress IntelliJ’s “should be closed” warning
+    protected static final PostgreSQLContainer<?> postgres =
+            new PostgreSQLContainer<>("postgres:15-alpine")
+                    .withDatabaseName("testdb")
+                    .withUsername("test")
+                    .withPassword("test");
 
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        // Enable Flyway for integration tests
-        registry.add("spring.flyway.enabled", () -> "true");
+        registry.add("spring.datasource.url",     postgres::getJdbcUrl);
+        registry.add("spring.datasource.username",postgres::getUsername);
+        registry.add("spring.datasource.password",postgres::getPassword);
+        registry.add("spring.flyway.enabled",     () -> "true");
     }
 }
