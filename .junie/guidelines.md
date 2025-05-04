@@ -38,7 +38,7 @@
 ## Git Guidelines
 - Write meaningful commit messages
 - Use feature branches for new development
-- Squash commits before merging to main branch
+- Squash commits before merging to develop branch
 - Keep pull requests focused on a single feature or fix
 
 ## Security Guidelines
