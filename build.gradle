@@ -32,6 +32,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'com.h2database:h2'
 
+	// TestContainers
+	testImplementation 'org.testcontainers:testcontainers:1.19.4'
+	testImplementation 'org.testcontainers:junit-jupiter:1.19.4'
+	testImplementation 'org.testcontainers:postgresql:1.19.4'
+
+	// Explicitly override vulnerable commons-compress version
+	testImplementation 'org.apache.commons:commons-compress:1.26.0'
+
 	// Add Lombok-aware Checkstyle plugin
 	checkstyle 'com.puppycrawl.tools:checkstyle:10.12.5'
 	checkstyle 'com.github.sevntu-checkstyle:sevntu-checks:1.44.1'
