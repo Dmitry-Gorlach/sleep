@@ -1,14 +1,17 @@
 package com.noom.interview.fullstack.sleep.test;
 
+import com.noom.interview.fullstack.sleep.config.TestcontainersConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Abstract base class for integration tests.
- * This class configures tests to use H2 in-memory database instead of PostgreSQL.
+ * This class configures tests to use PostgreSQL via Testcontainers.
  */
 @SpringBootTest
 @ActiveProfiles("integration")
+@Import(TestcontainersConfiguration.class)
 public abstract class AbstractIntegrationTest {
-    // No Testcontainers configuration
+    // Using Testcontainers configuration
 }
