@@ -6,6 +6,7 @@
 <suppressions>
     <suppress files="SleepApplication.java" checks="HideUtilityClassConstructor"/>
     <suppress files="SleepApplication.java" checks="FinalClass"/>
+    <suppress files="TestcontainersConfiguration.java" checks="FinalClass"/>
     <!-- turn off method‐naming, constant‐naming, and whitespace-after checks in tests -->
     <suppress files="src/test/java/.*" checks="MethodName|ConstantName|WhitespaceAfter"/>
 </suppressions>
