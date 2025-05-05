@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -145,5 +145,35 @@ class SleepLogServiceTest {
         verify(sleepLogRepository).existsByUserIdAndSleepDate(userId, sleepDate);
         verify(sleepLogMapper, never()).toEntity(any());
         verify(sleepLogRepository, never()).save(any());
+    }
+
+    @Test
+    void getLatestSleepLog_SleepLogExists_ReturnsOptionalWithSleepLogResponse() {
+        // Arrange
+        when(sleepLogRepository.findFirstByUserIdOrderBySleepDateDesc(userId)).thenReturn(Optional.of(sleepLog));
+        when(sleepLogMapper.toResponse(sleepLog)).thenReturn(expectedResponse);
+
+        // Act
+        Optional<SleepLogResponse> result = sleepLogService.getLatestSleepLog(userId);
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(expectedResponse, result.get());
+        verify(sleepLogRepository).findFirstByUserIdOrderBySleepDateDesc(userId);
+        verify(sleepLogMapper).toResponse(sleepLog);
+    }
+
+    @Test
+    void getLatestSleepLog_NoSleepLogExists_ReturnsEmptyOptional() {
+        // Arrange
+        when(sleepLogRepository.findFirstByUserIdOrderBySleepDateDesc(userId)).thenReturn(Optional.empty());
+
+        // Act
+        Optional<SleepLogResponse> result = sleepLogService.getLatestSleepLog(userId);
+
+        // Assert
+        assertFalse(result.isPresent());
+        verify(sleepLogRepository).findFirstByUserIdOrderBySleepDateDesc(userId);
+        verify(sleepLogMapper, never()).toResponse(any());
     }
 }

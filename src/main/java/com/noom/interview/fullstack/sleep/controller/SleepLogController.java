@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
@@ -48,5 +49,27 @@ public class SleepLogController {
         SleepLogResponse response = sleepLogService.createSleepLog(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * Gets the latest sleep log for a user.
+     *
+     * @param userId the ID of the user (from header)
+     * @return the latest sleep log with status 200 (OK) or 404 (Not Found) if none exists
+     */
+    @GetMapping("/latest")
+    @Operation(summary = "Get latest sleep log", description = "Gets the most recent sleep log for the specified user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Latest sleep log found",
+                    content = @Content(schema = @Schema(implementation = SleepLogResponse.class))),
+            @ApiResponse(responseCode = "404", description = "No sleep logs found for the user")
+    })
+    public ResponseEntity<SleepLogResponse> getLatestSleepLog(
+            @RequestHeader("X-User-ID") UUID userId) {
+
+        return sleepLogService.getLatestSleepLog(userId)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+                        String.format("No sleep logs found for user %s", userId)));
     }
 }

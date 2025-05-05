@@ -2,6 +2,8 @@ package com.noom.interview.fullstack.sleep.service;
 
 import com.noom.interview.fullstack.sleep.domain.dto.*;
 
+import java.util.*;
+
 /**
  * Service for managing sleep logs.
  */
@@ -16,4 +18,12 @@ public interface SleepLogService {
      * @throws IllegalStateException if a sleep log already exists for the given userId and sleepDate
      */
     SleepLogResponse createSleepLog(SleepLogRequest request);
+
+    /**
+     * Gets the latest sleep log for a user.
+     *
+     * @param userId the ID of the user
+     * @return an Optional containing the latest sleep log, or empty if none exists
+     */
+    Optional<SleepLogResponse> getLatestSleepLog(UUID userId);
 }

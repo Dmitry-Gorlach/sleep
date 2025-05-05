@@ -4,6 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -75,6 +76,20 @@ public class GlobalExceptionHandler {
         errorResponse.put(ERROR_KEY, "Bad Request");
         errorResponse.put(MESSAGE_KEY, ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    /**
+     * Handles ResponseStatusException and returns a response with the status code from the exception.
+     *
+     * @param ex the exception
+     * @return the response entity with the status code from the exception and error message
+     */
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Map<String, String>> handleResponseStatusException(ResponseStatusException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put(ERROR_KEY, ex.getStatusCode().toString());
+        errorResponse.put(MESSAGE_KEY, ex.getReason());
+        return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
     }
 
     /**

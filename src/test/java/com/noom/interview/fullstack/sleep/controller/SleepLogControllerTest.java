@@ -13,11 +13,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SleepLogController.class)
@@ -126,5 +126,47 @@ class SleepLogControllerTest {
 
         // Verify that the service was called
         verify(sleepLogService).createSleepLog(any(SleepLogRequest.class));
+    }
+
+    @Test
+    void getLatestSleepLog_SleepLogExists_Returns200Ok() throws Exception {
+        // Arrange
+        when(sleepLogService.getLatestSleepLog(userId)).thenReturn(Optional.of(expectedResponse));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/sleep-logs/latest")
+                        .header("X-User-ID", userId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.sleepDate").value(sleepDate.toString()))
+                .andExpect(jsonPath("$.totalTimeInBedMinutes").value(480))
+                .andExpect(jsonPath("$.feeling").value(Feeling.GOOD.toString()));
+
+        // Verify that the service was called with the correct userId
+        verify(sleepLogService).getLatestSleepLog(userId);
+    }
+
+    @Test
+    void getLatestSleepLog_NoSleepLogExists_Returns404NotFound() throws Exception {
+        // Arrange
+        when(sleepLogService.getLatestSleepLog(userId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        mockMvc.perform(get("/api/sleep-logs/latest")
+                        .header("X-User-ID", userId.toString()))
+                .andExpect(status().isNotFound());
+
+        // Verify that the service was called with the correct userId
+        verify(sleepLogService).getLatestSleepLog(userId);
+    }
+
+    @Test
+    void getLatestSleepLog_MissingUserId_Returns400BadRequest() throws Exception {
+        // Act & Assert
+        mockMvc.perform(get("/api/sleep-logs/latest"))
+                .andExpect(status().isBadRequest());
+
+        // Verify that the service was not called
+        verify(sleepLogService, never()).getLatestSleepLog(any());
     }
 }
