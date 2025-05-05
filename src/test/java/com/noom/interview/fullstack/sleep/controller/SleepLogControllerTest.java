@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noom.interview.fullstack.sleep.domain.dto.*;
 import com.noom.interview.fullstack.sleep.domain.entity.Feeling;
 import com.noom.interview.fullstack.sleep.service.SleepLogService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.*;
@@ -21,6 +23,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SleepLogController.class)
+@Import({com.noom.interview.fullstack.sleep.config.TestConfig.class,
+        com.noom.interview.fullstack.sleep.exception.GlobalExceptionHandler.class})
+@ActiveProfiles("unittest")
 class SleepLogControllerTest {
 
     @Autowired
@@ -29,7 +34,7 @@ class SleepLogControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     private SleepLogService sleepLogService;
 
     private UUID userId;
@@ -41,6 +46,9 @@ class SleepLogControllerTest {
 
     @BeforeEach
     void setUp() {
+        // Reset the mock before each test
+        reset(sleepLogService);
+
         userId = UUID.randomUUID();
         sleepDate = LocalDate.now();
         bedTime = Instant.now().minus(8, ChronoUnit.HOURS);
@@ -149,12 +157,25 @@ class SleepLogControllerTest {
     @Test
     void getLatestSleepLog_NoSleepLogExists_Returns404NotFound() throws Exception {
         // Arrange
+        String expectedErrorMessage = "No sleep logs found for user " + userId;
         when(sleepLogService.getLatestSleepLog(userId)).thenReturn(Optional.empty());
 
         // Act & Assert
         mockMvc.perform(get("/api/sleep-logs/latest")
                         .header("X-User-ID", userId.toString()))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound()) // Verify the HTTP status
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)) // Verify content type
+                // Verify the structure and content of the ErrorResponse body
+                .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+                .andExpect(jsonPath("$.error").value(HttpStatus.NOT_FOUND.getReasonPhrase()))
+                .andExpect(jsonPath("$.message").value(expectedErrorMessage))
+                .andExpect(jsonPath("$.path").value("/api/sleep-logs/latest"))
+                .andExpect(jsonPath("$.timestamp").exists()) // Check timestamp exists
+                // Optionally, check timestamp format or that it's recent (more complex assertion)
+                .andExpect(jsonPath("$.timestamp", Matchers.matchesPattern(
+                        // Regex for ISO 8601 OffsetDateTime like 2023-10-27T10:15:30.123456+01:00
+                        "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([+\\-]\\d{2}:\\d{2}|Z)$"
+                )));
 
         // Verify that the service was called with the correct userId
         verify(sleepLogService).getLatestSleepLog(userId);

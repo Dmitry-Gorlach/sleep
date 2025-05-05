@@ -13,7 +13,8 @@ RUN apt-get update && \
     ./gradlew wrapper
 
 COPY src/ src
+COPY config/ config/
 
-RUN ./gradlew build
+RUN ./gradlew build -x test
 
 ENTRYPOINT ["java","-jar","build/libs/sleep-0.0.1-SNAPSHOT.jar"]
