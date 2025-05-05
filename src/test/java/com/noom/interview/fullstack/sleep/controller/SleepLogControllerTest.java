@@ -190,4 +190,80 @@ class SleepLogControllerTest {
         // Verify that the service was not called
         verify(sleepLogService, never()).getLatestSleepLog(any());
     }
+
+    @Test
+    void getSleepStatistics_ValidRequest_Returns200Ok() throws Exception {
+        // Arrange
+        Map<Feeling, Integer> feelingCounts = new EnumMap<>(Feeling.class);
+        feelingCounts.put(Feeling.GOOD, 3);
+        feelingCounts.put(Feeling.OK, 2);
+        feelingCounts.put(Feeling.BAD, 1);
+
+        SleepStatisticsResponse statisticsResponse = SleepStatisticsResponse.builder()
+                .averageTotalTimeInBedMinutes(480.0)
+                .averageBedTime(LocalTime.of(22, 30))
+                .averageWakeTime(LocalTime.of(6, 30))
+                .feelingCounts(feelingCounts)
+                .build();
+
+        when(sleepLogService.getSleepStatistics(userId)).thenReturn(statisticsResponse);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/sleep-logs/statistics")
+                        .header("X-User-ID", userId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.averageTotalTimeInBedMinutes").value(480.0))
+                .andExpect(jsonPath("$.averageBedTime").value("22:30:00"))
+                .andExpect(jsonPath("$.averageWakeTime").value("06:30:00"))
+                .andExpect(jsonPath("$.feelingCounts.GOOD").value(3))
+                .andExpect(jsonPath("$.feelingCounts.OK").value(2))
+                .andExpect(jsonPath("$.feelingCounts.BAD").value(1));
+
+        // Verify that the service was called with the correct userId
+        verify(sleepLogService).getSleepStatistics(userId);
+    }
+
+    @Test
+    void getSleepStatistics_MissingUserId_Returns400BadRequest() throws Exception {
+        // Act & Assert
+        mockMvc.perform(get("/api/sleep-logs/statistics"))
+                .andExpect(status().isBadRequest());
+
+        // Verify that the service was not called
+        verify(sleepLogService, never()).getSleepStatistics(any());
+    }
+
+    @Test
+    void getSleepStatistics_EmptyStatistics_Returns200OkWithEmptyData() throws Exception {
+        // Arrange
+        Map<Feeling, Integer> emptyFeelingCounts = new EnumMap<>(Feeling.class);
+        emptyFeelingCounts.put(Feeling.GOOD, 0);
+        emptyFeelingCounts.put(Feeling.OK, 0);
+        emptyFeelingCounts.put(Feeling.BAD, 0);
+
+        SleepStatisticsResponse emptyResponse = SleepStatisticsResponse.builder()
+                .averageTotalTimeInBedMinutes(0.0)
+                .averageBedTime(null)
+                .averageWakeTime(null)
+                .feelingCounts(emptyFeelingCounts)
+                .build();
+
+        when(sleepLogService.getSleepStatistics(userId)).thenReturn(emptyResponse);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/sleep-logs/statistics")
+                        .header("X-User-ID", userId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.averageTotalTimeInBedMinutes").value(0.0))
+                .andExpect(jsonPath("$.averageBedTime").isEmpty())
+                .andExpect(jsonPath("$.averageWakeTime").isEmpty())
+                .andExpect(jsonPath("$.feelingCounts.GOOD").value(0))
+                .andExpect(jsonPath("$.feelingCounts.OK").value(0))
+                .andExpect(jsonPath("$.feelingCounts.BAD").value(0));
+
+        // Verify that the service was called with the correct userId
+        verify(sleepLogService).getSleepStatistics(userId);
+    }
 }
