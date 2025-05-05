@@ -3,16 +3,13 @@ package com.noom.interview.fullstack.sleep.mapper;
 import com.noom.interview.fullstack.sleep.domain.dto.*;
 import com.noom.interview.fullstack.sleep.domain.entity.SleepLog;
 import org.mapstruct.*;
-import org.mapstruct.factory.Mappers;
 
 /**
  * MapStruct mapper for converting between SleepLog entity and DTOs.
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface SleepLogMapper {
-    
-    SleepLogMapper INSTANCE = Mappers.getMapper(SleepLogMapper.class);
-    
+
     /**
      * Converts a SleepLogRequest to a SleepLog entity.
      * 
@@ -23,7 +20,7 @@ public interface SleepLogMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "totalTimeInBedMinutes", ignore = true)
     SleepLog toEntity(SleepLogRequest request);
-    
+
     /**
      * Converts a SleepLog entity to a SleepLogResponse DTO.
      * 

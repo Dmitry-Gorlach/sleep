@@ -3,18 +3,15 @@ package com.noom.interview.fullstack.sleep.mapper;
 import com.noom.interview.fullstack.sleep.domain.dto.*;
 import com.noom.interview.fullstack.sleep.domain.entity.*;
 import org.mapstruct.*;
-import org.mapstruct.factory.Mappers;
 
 import java.util.*;
 
 /**
  * MapStruct mapper for converting sleep logs to statistics response.
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface SleepStatisticsMapper {
-    
-    SleepStatisticsMapper INSTANCE = Mappers.getMapper(SleepStatisticsMapper.class);
-    
+
     /**
      * Creates a SleepStatisticsResponse from a list of SleepLog entities, a date range,
      * average times, and feeling frequencies.
@@ -33,7 +30,7 @@ public interface SleepStatisticsMapper {
                                       String averageBedTime,
                                       String averageWakeTime,
                                       Map<Feeling, Integer> feelingFrequencies);
-    
+
     /**
      * Calculates the average total time in bed in minutes from a list of SleepLog entities.
      * 
@@ -44,7 +41,7 @@ public interface SleepStatisticsMapper {
         if (sleepLogs == null || sleepLogs.isEmpty()) {
             return 0;
         }
-        
+
         return (int) sleepLogs.stream()
                 .mapToInt(SleepLog::getTotalTimeInBedMinutes)
                 .average()

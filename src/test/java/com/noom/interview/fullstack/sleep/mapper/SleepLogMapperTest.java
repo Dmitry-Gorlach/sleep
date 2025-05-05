@@ -3,13 +3,19 @@ package com.noom.interview.fullstack.sleep.mapper;
 import com.noom.interview.fullstack.sleep.domain.dto.*;
 import com.noom.interview.fullstack.sleep.domain.entity.*;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.*;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class SleepLogMapperTest {
+
+    @Autowired
+    private SleepLogMapper sleepLogMapper;
 
     private static final UUID USER_ID = UUID.randomUUID();
     private static final LocalDate SLEEP_DATE = LocalDate.of(2023, 5, 15);
@@ -30,7 +36,7 @@ class SleepLogMapperTest {
                 .build();
 
         // Act
-        SleepLog entity = SleepLogMapper.INSTANCE.toEntity(request);
+        SleepLog entity = sleepLogMapper.toEntity(request);
 
         // Assert
         assertEquals(USER_ID, entity.getUserId());
@@ -38,7 +44,7 @@ class SleepLogMapperTest {
         assertEquals(BED_TIME, entity.getBedTime());
         assertEquals(WAKE_TIME, entity.getWakeTime());
         assertEquals(FEELING, entity.getFeeling());
-        
+
         // Fields that should be ignored
         assertNull(entity.getId());
         assertNull(entity.getCreatedAt());
@@ -60,7 +66,7 @@ class SleepLogMapperTest {
                 .build();
 
         // Act
-        SleepLogResponse response = SleepLogMapper.INSTANCE.toResponse(entity);
+        SleepLogResponse response = sleepLogMapper.toResponse(entity);
 
         // Assert
         assertEquals(SLEEP_DATE, response.getSleepDate());
