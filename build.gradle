@@ -37,11 +37,6 @@ dependencies {
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 	testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
-	// TestContainers
-	testImplementation 'org.testcontainers:testcontainers:1.19.4'
-	testImplementation 'org.testcontainers:junit-jupiter:1.19.4'
-	testImplementation 'org.testcontainers:postgresql:1.19.4'
-
 	// Explicitly override vulnerable commons-compress version
 	testImplementation 'org.apache.commons:commons-compress:1.26.0'
 

@@ -13,6 +13,9 @@ import java.util.*;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final String ERROR_KEY = "error";
+    private static final String MESSAGE_KEY = "message";
+
     /**
      * Handles IllegalArgumentException and returns a 400 Bad Request response.
      *
@@ -23,8 +26,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
         Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", "Bad Request");
-        errorResponse.put("message", ex.getMessage());
+        errorResponse.put(ERROR_KEY, "Bad Request");
+        errorResponse.put(MESSAGE_KEY, ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
@@ -38,8 +41,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<Map<String, String>> handleIllegalStateException(IllegalStateException ex) {
         Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", "Conflict");
-        errorResponse.put("message", ex.getMessage());
+        errorResponse.put(ERROR_KEY, "Conflict");
+        errorResponse.put(MESSAGE_KEY, ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
@@ -51,10 +54,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+    public ResponseEntity<Map<String, String>>
+    handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", "Conflict");
-        errorResponse.put("message", "Data integrity violation: " + ex.getMessage());
+        errorResponse.put(ERROR_KEY, "Conflict");
+        errorResponse.put(MESSAGE_KEY, "Data integrity violation: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
@@ -68,8 +72,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleMissingRequestHeaderException(MissingRequestHeaderException ex) {
         Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", "Bad Request");
-        errorResponse.put("message", ex.getMessage());
+        errorResponse.put(ERROR_KEY, "Bad Request");
+        errorResponse.put(MESSAGE_KEY, ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
@@ -83,8 +87,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Map<String, String>> handleException(Exception ex) {
         Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", "Internal Server Error");
-        errorResponse.put("message", ex.getMessage());
+        errorResponse.put(ERROR_KEY, "Internal Server Error");
+        errorResponse.put(MESSAGE_KEY, ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }
