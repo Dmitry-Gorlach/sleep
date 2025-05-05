@@ -176,4 +176,114 @@ class SleepLogServiceTest {
         verify(sleepLogRepository).findFirstByUserIdOrderBySleepDateDesc(userId);
         verify(sleepLogMapper, never()).toResponse(any());
     }
+
+    @Test
+    void getSleepStatistics_WithSleepLogs_ReturnsCorrectStatistics() {
+        // Arrange
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(29); // 30 days including today
+
+        // Create test sleep logs
+        List<SleepLog> sleepLogs = createTestSleepLogs();
+
+        // Mock repository to return test sleep logs
+        when(sleepLogRepository.findByUserIdAndSleepDateBetween(userId, startDate, endDate))
+                .thenReturn(sleepLogs);
+
+        // Act
+        SleepStatisticsResponse response = sleepLogService.getSleepStatistics(userId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(480.0, response.getAverageTotalTimeInBedMinutes());
+        assertNotNull(response.getAverageBedTime());
+        assertNotNull(response.getAverageWakeTime());
+        assertNotNull(response.getFeelingCounts());
+
+        // Verify feeling counts
+        Map<Feeling, Integer> feelingCounts = response.getFeelingCounts();
+        assertEquals(1, feelingCounts.get(Feeling.GOOD));
+        assertEquals(1, feelingCounts.get(Feeling.OK));
+        assertEquals(1, feelingCounts.get(Feeling.BAD));
+
+        // Verify repository was called with correct parameters
+        verify(sleepLogRepository).findByUserIdAndSleepDateBetween(userId, startDate, endDate);
+    }
+
+    @Test
+    void getSleepStatistics_NoSleepLogs_ReturnsEmptyStatistics() {
+        // Arrange
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(29); // 30 days including today
+
+        // Mock repository to return empty list
+        when(sleepLogRepository.findByUserIdAndSleepDateBetween(userId, startDate, endDate))
+                .thenReturn(Collections.emptyList());
+
+        // Act
+        SleepStatisticsResponse response = sleepLogService.getSleepStatistics(userId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(0.0, response.getAverageTotalTimeInBedMinutes());
+        assertNull(response.getAverageBedTime());
+        assertNull(response.getAverageWakeTime());
+
+        // Verify all feelings have zero count
+        Map<Feeling, Integer> feelingCounts = response.getFeelingCounts();
+        assertNotNull(feelingCounts);
+        assertEquals(0, feelingCounts.get(Feeling.GOOD));
+        assertEquals(0, feelingCounts.get(Feeling.OK));
+        assertEquals(0, feelingCounts.get(Feeling.BAD));
+
+        // Verify repository was called with correct parameters
+        verify(sleepLogRepository).findByUserIdAndSleepDateBetween(userId, startDate, endDate);
+    }
+
+    /**
+     * Helper method to create test sleep logs with different feelings
+     */
+    private List<SleepLog> createTestSleepLogs() {
+        LocalDate today = LocalDate.now();
+        ZoneId zoneId = ZoneId.systemDefault();
+
+        // Create three sleep logs with different feelings
+        SleepLog log1 = SleepLog.builder()
+                .id(1L)
+                .userId(userId)
+                .sleepDate(today.minusDays(1))
+                .bedTime(LocalDateTime.of(today.minusDays(1), LocalTime.of(22, 0))
+                        .atZone(zoneId).toInstant())
+                .wakeTime(LocalDateTime.of(today, LocalTime.of(6, 0))
+                        .atZone(zoneId).toInstant())
+                .totalTimeInBedMinutes(480)
+                .feeling(Feeling.GOOD)
+                .build();
+
+        SleepLog log2 = SleepLog.builder()
+                .id(2L)
+                .userId(userId)
+                .sleepDate(today.minusDays(2))
+                .bedTime(LocalDateTime.of(today.minusDays(2), LocalTime.of(22, 0))
+                        .atZone(zoneId).toInstant())
+                .wakeTime(LocalDateTime.of(today.minusDays(1), LocalTime.of(6, 0))
+                        .atZone(zoneId).toInstant())
+                .totalTimeInBedMinutes(480)
+                .feeling(Feeling.OK)
+                .build();
+
+        SleepLog log3 = SleepLog.builder()
+                .id(3L)
+                .userId(userId)
+                .sleepDate(today.minusDays(3))
+                .bedTime(LocalDateTime.of(today.minusDays(3), LocalTime.of(22, 0))
+                        .atZone(zoneId).toInstant())
+                .wakeTime(LocalDateTime.of(today.minusDays(2), LocalTime.of(6, 0))
+                        .atZone(zoneId).toInstant())
+                .totalTimeInBedMinutes(480)
+                .feeling(Feeling.BAD)
+                .build();
+
+        return Arrays.asList(log1, log2, log3);
+    }
 }

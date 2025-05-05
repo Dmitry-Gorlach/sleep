@@ -26,4 +26,12 @@ public interface SleepLogService {
      * @return an Optional containing the latest sleep log, or empty if none exists
      */
     Optional<SleepLogResponse> getLatestSleepLog(UUID userId);
+
+    /**
+     * Gets sleep statistics for a user over the last 30 days.
+     * 
+     * @param userId the ID of the user
+     * @return the sleep statistics response
+     */
+    SleepStatisticsResponse getSleepStatistics(UUID userId);
 }

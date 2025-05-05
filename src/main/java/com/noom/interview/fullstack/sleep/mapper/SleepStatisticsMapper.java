@@ -25,6 +25,7 @@ public interface SleepStatisticsMapper {
      */
     @Mapping(target = "averageTotalTimeInBedMinutes",
             expression = "java(calculateAverageTotalTimeInBedMinutes(sleepLogs))")
+    @Mapping(target = "feelingCounts", source = "feelingFrequencies")
     SleepStatisticsResponse toResponse(List<SleepLog> sleepLogs, 
                                       DateRange dateRange,
                                       String averageBedTime,
@@ -35,16 +36,16 @@ public interface SleepStatisticsMapper {
      * Calculates the average total time in bed in minutes from a list of SleepLog entities.
      * 
      * @param sleepLogs the list of SleepLog entities
-     * @return the average total time in bed in minutes
+     * @return the average total time in bed in minutes as a Double
      */
-    default Integer calculateAverageTotalTimeInBedMinutes(List<SleepLog> sleepLogs) {
+    default Double calculateAverageTotalTimeInBedMinutes(List<SleepLog> sleepLogs) {
         if (sleepLogs == null || sleepLogs.isEmpty()) {
-            return 0;
+            return 0.0;
         }
 
-        return (int) sleepLogs.stream()
+        return sleepLogs.stream()
                 .mapToInt(SleepLog::getTotalTimeInBedMinutes)
                 .average()
-                .orElse(0);
+                .orElse(0.0);
     }
 }

@@ -72,4 +72,24 @@ public class SleepLogController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
                         String.format("No sleep logs found for user %s", userId)));
     }
+
+    /**
+     * Gets sleep statistics for a user over the last 30 days.
+     *
+     * @param userId the ID of the user (from header)
+     * @return the sleep statistics with status 200 (OK)
+     */
+    @GetMapping("/statistics")
+    @Operation(summary = "Get sleep statistics",
+            description = "Gets sleep statistics for the specified user over the last 30 days")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Sleep statistics calculated",
+                    content = @Content(schema = @Schema(implementation = SleepStatisticsResponse.class)))
+    })
+    public ResponseEntity<SleepStatisticsResponse> getSleepStatistics(
+            @RequestHeader("X-User-ID") UUID userId) {
+
+        SleepStatisticsResponse statistics = sleepLogService.getSleepStatistics(userId);
+        return ResponseEntity.ok(statistics);
+    }
 }

@@ -20,8 +20,8 @@ class SleepStatisticsMapperTest {
     private static final UUID USER_ID = UUID.randomUUID();
     private static final LocalDate START_DATE = LocalDate.of(2023, 5, 1);
     private static final LocalDate END_DATE = LocalDate.of(2023, 5, 30);
-    private static final String AVERAGE_BED_TIME = "22:30:00";
-    private static final String AVERAGE_WAKE_TIME = "06:30:00";
+    private static final String AVERAGE_BED_TIME = "22:30";
+    private static final String AVERAGE_WAKE_TIME = "06:30";
 
     @Test
     void toResponse_shouldMapToStatisticsResponse() {
@@ -43,29 +43,28 @@ class SleepStatisticsMapperTest {
                 sleepLogs, dateRange, AVERAGE_BED_TIME, AVERAGE_WAKE_TIME, feelingFrequencies);
 
         // Assert
-        assertEquals(dateRange, response.getDateRange());
-        assertEquals(470, response.getAverageTotalTimeInBedMinutes()); // (480 + 420 + 510) / 3 = 470
-        assertEquals(AVERAGE_BED_TIME, response.getAverageBedTime());
-        assertEquals(AVERAGE_WAKE_TIME, response.getAverageWakeTime());
-        assertEquals(feelingFrequencies, response.getFeelingFrequencies());
+        assertEquals(470.0, response.getAverageTotalTimeInBedMinutes()); // (480 + 420 + 510) / 3 = 470
+        assertEquals(LocalTime.parse(AVERAGE_BED_TIME), response.getAverageBedTime());
+        assertEquals(LocalTime.parse(AVERAGE_WAKE_TIME), response.getAverageWakeTime());
+        assertEquals(feelingFrequencies, response.getFeelingCounts());
     }
 
     @Test
     void calculateAverageTotalTimeInBedMinutes_shouldReturnZeroForEmptyList() {
         // Act
-        Integer result = sleepStatisticsMapper.calculateAverageTotalTimeInBedMinutes(Collections.emptyList());
+        Double result = sleepStatisticsMapper.calculateAverageTotalTimeInBedMinutes(Collections.emptyList());
 
         // Assert
-        assertEquals(0, result);
+        assertEquals(0.0, result);
     }
 
     @Test
     void calculateAverageTotalTimeInBedMinutes_shouldReturnZeroForNullList() {
         // Act
-        Integer result = sleepStatisticsMapper.calculateAverageTotalTimeInBedMinutes(null);
+        Double result = sleepStatisticsMapper.calculateAverageTotalTimeInBedMinutes(null);
 
         // Assert
-        assertEquals(0, result);
+        assertEquals(0.0, result);
     }
 
     @Test
@@ -78,10 +77,10 @@ class SleepStatisticsMapperTest {
         );
 
         // Act
-        Integer result = sleepStatisticsMapper.calculateAverageTotalTimeInBedMinutes(sleepLogs);
+        Double result = sleepStatisticsMapper.calculateAverageTotalTimeInBedMinutes(sleepLogs);
 
         // Assert
-        assertEquals(470, result); // (480 + 420 + 510) / 3 = 470
+        assertEquals(470.0, result); // (480 + 420 + 510) / 3 = 470
     }
 
     private SleepLog createSleepLog(Long id, LocalDate sleepDate, Integer totalTimeInBedMinutes) {
