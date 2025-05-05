@@ -1,0 +1,252 @@
+{
+  "info": {
+    "name": "Sleep Application API",
+    "description": "Collection of API endpoints for the Sleep Application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Sleep Log",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-User-ID",
+            "value": "{{userId}}",
+            "description": "Replace with a valid UUID or use a Postman variable"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"sleepDate\": \"2023-10-15\",\n    \"bedTime\": \"2023-10-15T22:00:00Z\",\n    \"wakeTime\": \"2023-10-16T06:00:00Z\",\n    \"feeling\": \"GOOD\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/sleep-logs",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "sleep-logs"]
+        },
+        "description": "Creates a new sleep log entry for the user specified in the X-User-ID header."
+      },
+      "response": [
+        {
+          "name": "Successful Response",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-ID",
+                "value": "{{userId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"sleepDate\": \"2023-10-15\",\n    \"bedTime\": \"2023-10-15T22:00:00Z\",\n    \"wakeTime\": \"2023-10-16T06:00:00Z\",\n    \"feeling\": \"GOOD\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/sleep-logs",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "sleep-logs"]
+            }
+          },
+          "status": "Created",
+          "code": 201,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n    \"sleepDate\": \"2023-10-15\",\n    \"bedTime\": \"2023-10-15T22:00:00Z\",\n    \"wakeTime\": \"2023-10-16T06:00:00Z\",\n    \"totalTimeInBedMinutes\": 480,\n    \"feeling\": \"GOOD\"\n}",
+          "cookie": [],
+          "_postman_previewlanguage": "json"
+        }
+      ]
+    },
+    {
+      "name": "Get Latest Sleep Log",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-User-ID",
+            "value": "{{userId}}",
+            "description": "Replace with a valid UUID or use a Postman variable"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/sleep-logs/latest",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "sleep-logs", "latest"]
+        },
+        "description": "Retrieves the latest sleep log for the user specified in the X-User-ID header."
+      },
+      "response": [
+        {
+          "name": "Successful Response",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{userId}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/sleep-logs/latest",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "sleep-logs", "latest"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n    \"sleepDate\": \"2023-10-15\",\n    \"bedTime\": \"2023-10-15T22:00:00Z\",\n    \"wakeTime\": \"2023-10-16T06:00:00Z\",\n    \"totalTimeInBedMinutes\": 480,\n    \"feeling\": \"GOOD\"\n}",
+          "cookie": [],
+          "_postman_previewlanguage": "json"
+        },
+        {
+          "name": "Not Found Response",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{userId}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/sleep-logs/latest",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "sleep-logs", "latest"]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n    \"status\": 404,\n    \"error\": \"Not Found\",\n    \"message\": \"No sleep logs found for user {{userId}}\",\n    \"path\": \"/api/sleep-logs/latest\",\n    \"timestamp\": \"2023-10-27T10:15:30.123456+01:00\"\n}",
+          "cookie": [],
+          "_postman_previewlanguage": "json"
+        }
+      ]
+    },
+    {
+      "name": "Get Sleep Statistics",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-User-ID",
+            "value": "{{userId}}",
+            "description": "Replace with a valid UUID or use a Postman variable"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/sleep-logs/statistics",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "sleep-logs", "statistics"]
+        },
+        "description": "Retrieves sleep statistics for the user specified in the X-User-ID header."
+      },
+      "response": [
+        {
+          "name": "Successful Response",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{userId}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/sleep-logs/statistics",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "sleep-logs", "statistics"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n    \"averageTotalTimeInBedMinutes\": 480.0,\n    \"averageBedTime\": \"22:30:00\",\n    \"averageWakeTime\": \"06:30:00\",\n    \"feelingCounts\": {\n        \"GOOD\": 3,\n        \"OK\": 2,\n        \"BAD\": 1\n    }\n}",
+          "cookie": [],
+          "_postman_previewlanguage": "json"
+        },
+        {
+          "name": "Empty Statistics Response",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-ID",
+                "value": "{{userId}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/sleep-logs/statistics",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "sleep-logs", "statistics"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n    \"averageTotalTimeInBedMinutes\": 0.0,\n    \"averageBedTime\": null,\n    \"averageWakeTime\": null,\n    \"feelingCounts\": {\n        \"GOOD\": 0,\n        \"OK\": 0,\n        \"BAD\": 0\n    }\n}",
+          "cookie": [],
+          "_postman_previewlanguage": "json"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "userId",
+      "value": "00000000-0000-0000-0000-000000000000",
+      "type": "string",
+      "description": "User ID for testing the API"
+    }
+  ]
+}
